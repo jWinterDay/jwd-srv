@@ -12,7 +12,7 @@
     <groupId>com.jwd</groupId>
     <artifactId>jwd-srv</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>jwd-srv</name>
+    <firstName>jwd-srv</firstName>
     <description>jwd server</description>
 
     <properties>
@@ -43,6 +43,12 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+
+        <!--jpa-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-jpa</artifactId>
         </dependency>
 
 
