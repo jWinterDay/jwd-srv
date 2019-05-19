@@ -1,8 +1,8 @@
-package com.jwd.service;
+package com.jwd.service.project;
 
 import com.jwd.model.project.IProjectInfo;
 import com.jwd.model.project.Project;
-import com.jwd.repository.ProjectRepository;
+import com.jwd.repository.IProjectRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class ProjectServiceImpl implements IProjectService {
     @Autowired
-    private ProjectRepository projectRepository;
+    private IProjectRepository projectRepository;
 
 
     public long getCount() {

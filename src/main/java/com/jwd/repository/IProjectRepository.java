@@ -10,7 +10,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.transaction.annotation.Transactional;
 
-public interface ProjectRepository extends JpaRepository<Project, Long> {
+public interface IProjectRepository extends JpaRepository<Project, Long> {
     //==--find--==//
     @Query("select p from Project p order by name")
     Page<Project> findAll(Pageable pageable);

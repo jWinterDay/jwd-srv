@@ -12,7 +12,6 @@
     <groupId>com.jwd</groupId>
     <artifactId>jwd-srv</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <firstName>jwd-srv</firstName>
     <description>jwd server</description>
 
     <properties>
@@ -23,8 +22,8 @@
 
 
     <dependencies>
-        <!--user-->
         <dependency>
+            <!--postgresql-->
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
             <scope>runtime</scope>
@@ -45,14 +44,54 @@
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
 
-        <!--jpa-->
         <dependency>
+            <!--jpa-->
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-jpa</artifactId>
         </dependency>
 
+        <dependency>
+            <!-- Automated JSON API documentation for API's built with Spring -->
+            <groupId>io.springfox</groupId>
+            <artifactId>springfox-swagger2</artifactId>
+            <version>2.7.0</version>
+        </dependency>
+        <dependency>
+            <!-- Generate beautiful documentation from a Swagger-compliant API. -->
+            <groupId>io.springfox</groupId>
+            <artifactId>springfox-swagger-ui</artifactId>
+            <version>2.7.0</version>
+        </dependency>
+
 
         <dependency>
+            <!--thymeleaf-->
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-thymeleaf</artifactId>
+        </dependency>
+
+        <dependency>
+            <!-- JSON Web Token Support -->
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt</artifactId>
+            <version>0.7.0</version>
+        </dependency>
+
+        <!--<dependency>
+            Starter for using Spring Security
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-security</artifactId>
+        </dependency>-->
+
+        <dependency>
+            <!-- Model Mapper -->
+            <groupId>org.modelmapper</groupId>
+            <artifactId>modelmapper</artifactId>
+            <version>1.1.0</version>
+        </dependency>
+
+        <dependency>
+            <!-- Automatically restart whenever files on the classpath change -->
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-devtools</artifactId>
             <optional>true</optional>

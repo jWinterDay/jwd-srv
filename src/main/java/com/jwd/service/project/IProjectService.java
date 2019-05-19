@@ -1,4 +1,4 @@
-package com.jwd.service;
+package com.jwd.service.project;
 
 import com.jwd.model.project.IProjectInfo;
 import com.jwd.model.project.Project;
