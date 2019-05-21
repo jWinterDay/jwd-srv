@@ -1,8 +1,8 @@
 package com.jwd.controller;
 
-import com.jwd.exception.AccessDeniedException;
 import com.jwd.exception.CustomException;
-import com.jwd.model.auth.Role;
+import com.jwd.model.auth.AccessGroup;
+import com.jwd.model.auth.User;
 import com.jwd.model.project.Project;
 import com.jwd.security.JwtTokenProvider;
 import com.jwd.service.project.IProjectService;
@@ -70,11 +70,14 @@ public class ProjectController {
         //throw new CustomException("yoooo", HttpStatus.UNAUTHORIZED);
         //JwtTokenProvider provider = new JwtTokenProvider();
 
-        List<Role> roles = new ArrayList<>();
-        roles.add(new Role("admin"));
-        roles.add(new Role("user"));
+        //List<AccessGroup> accessGroups = new ArrayList<>();
+        //accessGroups.add(new AccessGroup("admin"));
+        //accessGroups.add(new AccessGroup("user"));
 
-        String token = jwtTokenProvider.createToken("yoooo@ttt.gfdgfd", roles);
+        User user = new User();
+        user.setEmail("jj@f.tt");
+
+        String token = jwtTokenProvider.createToken(user);
 
         throw new CustomException(token, HttpStatus.UNAUTHORIZED);
         //return projectService.findRandom();

@@ -77,6 +77,12 @@
             <version>0.7.0</version>
         </dependency>
 
+        <dependency>
+            <!--security-->
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-core</artifactId>
+        </dependency>
+
         <!--<dependency>
             Starter for using Spring Security
             <groupId>org.springframework.boot</groupId>

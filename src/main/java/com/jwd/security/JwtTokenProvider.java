@@ -2,24 +2,19 @@ package com.jwd.security;
 
 
 import com.jwd.exception.CustomException;
-import com.jwd.model.auth.Role;
 
+import com.jwd.model.auth.User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
-import java.util.Base64;
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
+import java.util.*;
 
 @Component
 public class JwtTokenProvider {
@@ -28,46 +23,61 @@ public class JwtTokenProvider {
      * microservices environment, this key would be kept on a config-server.
      */
     @Value("${security.token.signing-key}")
-    private String secretKey;
-
+    private String tokenSecretKey;
     @Value("${security.token.expiration-time-ms}")
-    private long validityInMilliseconds = 2800000;
+    private long tokenValidityInMilliseconds = 2800000;
 
-    //@Autowired
-    //private MyUserDetails myUserDetails;
+    @Value("${security.refresh-token.signing-key}")
+    private String refreshTokenSecretKey;
+    @Value("${security.refresh-token.expiration-time-ms}")
+    private long refreshTokenValidityInMilliseconds = 432000000;
 
     @PostConstruct
     protected void init() {
-        secretKey = Base64.getEncoder().encodeToString(secretKey.getBytes());
+        tokenSecretKey = Base64.getEncoder().encodeToString(tokenSecretKey.getBytes());
     }
 
-    public String createToken(String email, List<Role> roles) {
-        Claims claims = Jwts.claims().setSubject(email);
+    public String createToken(User user) {
+        Claims claims = Jwts.claims().setSubject(user.getEmail());
 
-        claims.put("roles", roles);
+        //roles = roles == null ? new ArrayList<>() : roles;
+
+        //if (roles != null) {
+        //    claims.put("roles", roles);
+        //}
 
         Date now = new Date();
-        Date validity = new Date(now.getTime() + validityInMilliseconds);
+        Date validity = new Date(now.getTime() + tokenValidityInMilliseconds);
 
         return Jwts.builder()
                 .setClaims(claims)
                 .setIssuedAt(now)
                 .setExpiration(validity)
-                .signWith(SignatureAlgorithm.HS256, secretKey)
+                .signWith(SignatureAlgorithm.HS256, tokenSecretKey)
                 .compact();
     }
 
-    /*public Authentication getAuthentication(String token) {
-        UserDetails userDetails = myUserDetails.loadUserByUsername(getUsername(token));
-        return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
-    }*/
+    public String createRefreshToken(User user) {
+        Claims claims = Jwts.claims().setSubject(user.getEmail());
+
+        Date now = new Date();
+        Date validity = new Date(now.getTime() + refreshTokenValidityInMilliseconds);
+
+        return Jwts.builder()
+                .setClaims(claims)
+                .setIssuedAt(now)
+                .setExpiration(validity)
+                .signWith(SignatureAlgorithm.HS256, refreshTokenSecretKey)
+                .compact();
+    }
 
     public String getUsername(String token) {
-        return Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody().getSubject();
+        return Jwts.parser().setSigningKey(tokenSecretKey).parseClaimsJws(token).getBody().getSubject();
     }
 
     public String resolveToken(HttpServletRequest req) {
         String bearerToken = req.getHeader("Authorization");
+
         if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
             return bearerToken.substring(7);
         }
@@ -75,11 +85,15 @@ public class JwtTokenProvider {
     }
 
     public boolean validateToken(String token) {
+        if (token == null) {
+            throw new CustomException("invalid JWT token", HttpStatus.UNAUTHORIZED);
+        }
+
         try {
-            Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token);
+            Jwts.parser().setSigningKey(tokenSecretKey).parseClaimsJws(token);
             return true;
         } catch (JwtException | IllegalArgumentException e) {
-            throw new CustomException("Expired or invalid JWT token", HttpStatus.INTERNAL_SERVER_ERROR);
+            throw new CustomException("Expired or invalid JWT token", HttpStatus.UNAUTHORIZED);
         }
     }
 }

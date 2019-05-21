@@ -17,7 +17,7 @@ import java.util.Enumeration;
 
 //@Component
 //@Configuration
-@WebFilter(urlPatterns = "/yoo")
+//@WebFilter(urlPatterns = "/yoo")
 public class RequestFilter implements Filter {
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {

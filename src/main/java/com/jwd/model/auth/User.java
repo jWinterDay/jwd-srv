@@ -4,12 +4,12 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 @Entity
-@Table(name = "users")
+@Table(name = "users", indexes = {@Index(name = "user_email_idx", columnList = "email", unique = true)})
 public class User {
     @Id
-    //@GeneratedValue(strategy = GenerationType.AUTO)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "user_id_seq")
     @SequenceGenerator(name = "user_id_seq", sequenceName = "user_id_seq", allocationSize = 1)
     @Column(nullable = false, name = "user_id")
@@ -30,20 +30,20 @@ public class User {
     @NotNull
     private String email;
 
+    @Column(name = "password_hash")
+    @NotNull
+    private String passwordHash;
+
     @Column(name = "refresh_token")
     private String refreshToken;
 
-    //@ElementCollection(fetch = FetchType.EAGER)
-    //private
-    //List<Role> roles;
-
-    /*@ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinTable(
-            name = "USER_AUTHORITY",
-            joinColumns = {@JoinColumn(name = "USER_ID", referencedColumnName = "ID")},
-            inverseJoinColumns = {@JoinColumn(name = "AUTHORITY_ID", referencedColumnName = "ID")})
-    private List<Authority> authorities;*/
-
+            name = "user_in_access_group",
+            joinColumns = {@JoinColumn(name="user_id", referencedColumnName = "user_id")},
+            inverseJoinColumns = {@JoinColumn(name="access_group_id", referencedColumnName = "access_group_id")}
+    )
+    private List<AccessGroup> accessGroups;
 
     public Long getUserId() {
         return userId;
@@ -93,6 +93,14 @@ public class User {
         this.email = email;
     }
 
+    public String getPasswordHash() {
+        return passwordHash;
+    }
+
+    public void setPasswordHash(String passwordHash) {
+        this.passwordHash = passwordHash;
+    }
+
     public String getRefreshToken() {
         return refreshToken;
     }
@@ -101,13 +109,13 @@ public class User {
         this.refreshToken = refreshToken;
     }
 
-    //public List<Role> getRoles() {
-    //    return roles;
-    //}
+    public List<AccessGroup> getAccessGroups() {
+        return accessGroups;
+    }
 
-    //public void setRoles(List<Role> roles) {
-    //    this.roles = roles;
-    //}
+    public void setAccessGroups(List<AccessGroup> accessGroups) {
+        this.accessGroups = accessGroups;
+    }
 
     @Override
     public String toString() {
@@ -120,9 +128,8 @@ public class User {
         sb.append(", beginDate: " + beginDate);
         sb.append(", endDate: " + endDate);
         sb.append(", refreshToken: " + refreshToken);
-        //sb.append(", roles: " + roles);
+        sb.append(", accessGroups: " + accessGroups);
         sb.append(")");
-
 
         return sb.toString();
     }

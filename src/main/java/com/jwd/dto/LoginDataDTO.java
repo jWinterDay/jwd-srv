@@ -1,6 +1,6 @@
 package com.jwd.dto;
 
-import com.jwd.model.auth.Role;
+import com.jwd.model.auth.AccessGroup;
 import io.swagger.annotations.ApiModelProperty;
 
 import java.util.List;
@@ -9,7 +9,7 @@ public class LoginDataDTO {
     @ApiModelProperty(position = 0)
     private String email;
     @ApiModelProperty(position = 1)
-    List<Role> roles;
+    List<AccessGroup> accessGroups;
 
     public String getEmail() {
         return email;
@@ -19,11 +19,11 @@ public class LoginDataDTO {
         this.email = email;
     }
 
-    public List<Role> getRoles() {
-        return roles;
+    public List<AccessGroup> getAccessGroups() {
+        return accessGroups;
     }
 
-    public void setRoles(List<Role> roles) {
-        this.roles = roles;
+    public void setAccessGroups(List<AccessGroup> accessGroups) {
+        this.accessGroups = accessGroups;
     }
 }

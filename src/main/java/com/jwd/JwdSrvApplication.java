@@ -7,7 +7,7 @@ import org.springframework.context.annotation.ComponentScan;
 
 @SpringBootApplication
 @ComponentScan("com.jwd")
-@ServletComponentScan
+//@ServletComponentScan
 public class JwdSrvApplication {
     public static void main(String[] args) {
         SpringApplication.run(JwdSrvApplication.class, args);
