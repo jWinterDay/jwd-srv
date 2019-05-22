@@ -1,8 +1,10 @@
 package com.jwd.security;
 
 
+import com.google.gson.Gson;
 import com.jwd.exception.CustomException;
 
+import com.jwd.model.auth.AccessGroup;
 import com.jwd.model.auth.User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
@@ -15,6 +17,8 @@ import org.springframework.stereotype.Component;
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Component
 public class JwtTokenProvider {
@@ -38,16 +42,15 @@ public class JwtTokenProvider {
     }
 
     public String createToken(User user) {
-        Claims claims = Jwts.claims().setSubject(user.getEmail());
-
-        //roles = roles == null ? new ArrayList<>() : roles;
-
-        //if (roles != null) {
-        //    claims.put("roles", roles);
-        //}
-
         Date now = new Date();
         Date validity = new Date(now.getTime() + tokenValidityInMilliseconds);
+
+        Claims claims = Jwts.claims();//.setSubject(user.getEmail());
+        claims.put("email", user.getEmail());
+        claims.put("first_name", user.getFirstName());
+        claims.put("last_name", user.getLastName());
+        claims.put("access_groups", user.getAccessGroups());
+
 
         return Jwts.builder()
                 .setClaims(claims)
@@ -71,8 +74,25 @@ public class JwtTokenProvider {
                 .compact();
     }
 
-    public String getUsername(String token) {
-        return Jwts.parser().setSigningKey(tokenSecretKey).parseClaimsJws(token).getBody().getSubject();
+    public User parse(String token) {
+        final Claims claims = Jwts.parser().setSigningKey(tokenSecretKey).parseClaimsJws(token).getBody();
+
+        User user = new User();
+        user.setEmail(claims.get("email").toString());
+        user.setFirstName(claims.get("first_name").toString());
+        user.setLastName(claims.get("last_name").toString());
+
+        List<Map> groups = claims.get("access_groups", ArrayList.class);
+        List<AccessGroup> accessGroups = groups.stream()
+                .map(p -> new AccessGroup(Long.parseLong(p.get("access_group_id").toString()), p.get("name").toString()))
+                .collect(Collectors.toList());
+
+        user.setAccessGroups(accessGroups);
+        //List<Long> userGroupIds = groups.stream()
+        //        .map(p -> Long.parseLong(p.get("access_group_id").toString()))
+        //        .collect(Collectors.toList());
+
+        return user;
     }
 
     public String resolveToken(HttpServletRequest req) {

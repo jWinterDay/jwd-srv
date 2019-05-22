@@ -1,5 +1,7 @@
 package com.jwd.model.auth;
 
+import org.hibernate.annotations.Where;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.util.Date;
@@ -38,6 +40,7 @@ public class User {
     private String refreshToken;
 
     @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @Where(clause = "end_date is null")
     @JoinTable(
             name = "user_in_access_group",
             joinColumns = {@JoinColumn(name="user_id", referencedColumnName = "user_id")},

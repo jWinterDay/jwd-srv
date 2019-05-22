@@ -1,10 +1,9 @@
 package com.jwd.controller;
 
-import com.jwd.exception.CustomException;
-import com.jwd.model.auth.AccessGroup;
-import com.jwd.model.auth.User;
+import com.jwd.model.auth.AccessGroupId;
 import com.jwd.model.project.Project;
 import com.jwd.security.JwtTokenProvider;
+import com.jwd.security.RequestAccess;
 import com.jwd.service.project.IProjectService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
@@ -14,11 +13,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
 import java.util.List;
 
-//@RestController
 @Controller
 public class ProjectController {
     @Autowired
@@ -40,6 +36,7 @@ public class ProjectController {
     }
 
     @GetMapping(value = "/project_list")
+    @RequestAccess(accessGroupId = AccessGroupId.PROJECT_VIEW)
     public String getProjectListView1(@RequestParam(value = "page", defaultValue = "0") int page,
                                       @RequestParam(value = "size", defaultValue = "10") int size,
                                       Model model) {
@@ -48,39 +45,6 @@ public class ProjectController {
         model.addAttribute("projects", projects );
 
         return "project_list";
-    }
-
-    @GetMapping(value = "/yoo")
-    public String getProjectListView2(Model model) {
-        PageRequest pageRequest = PageRequest.of(0, 4);
-        List<Project> projects = projectService.findAll(pageRequest).getContent();
-        model.addAttribute("projects", projects );
-
-        return "project_list";
-    }
-
-    //@GetMapping(value = "/project_list2")
-    //public String getProjectListView1() {
-    //    return "redirect:/project_list/0/6";
-    //}
-
-    @GetMapping(value = "/project")
-    @ResponseBody
-    public String getProject(HttpServletRequest req) throws Exception {
-        //throw new CustomException("yoooo", HttpStatus.UNAUTHORIZED);
-        //JwtTokenProvider provider = new JwtTokenProvider();
-
-        //List<AccessGroup> accessGroups = new ArrayList<>();
-        //accessGroups.add(new AccessGroup("admin"));
-        //accessGroups.add(new AccessGroup("user"));
-
-        User user = new User();
-        user.setEmail("jj@f.tt");
-
-        String token = jwtTokenProvider.createToken(user);
-
-        throw new CustomException(token, HttpStatus.UNAUTHORIZED);
-        //return projectService.findRandom();
     }
 
     @GetMapping(value = "/project/{id:[\\d]+}")
