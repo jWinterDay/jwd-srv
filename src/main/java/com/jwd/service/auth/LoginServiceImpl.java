@@ -12,6 +12,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.Pbkdf2PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 @Service
 public class LoginServiceImpl implements ILoginService {
     @Autowired
@@ -62,18 +65,19 @@ public class LoginServiceImpl implements ILoginService {
     }
 
     @Override
-    public LoginResponse refreshToken() {
-        /*User user = loginRepository.findByEmail(loginForm.getEmail());
+    public String refreshToken(HttpServletRequest request,
+                               HttpServletResponse response) {
+        String currentToken = jwtTokenProvider.resolveToken(request);
+        String email = jwtTokenProvider.getSubject(currentToken);
+
+        User user = loginRepository.findByEmail(email);
 
         if (user == null) {
-            throw new CustomException("Invalid user credentials", HttpStatus.UNAUTHORIZED);
+            throw new CustomException("User not found", HttpStatus.UNPROCESSABLE_ENTITY);
         }
 
-        String token = jwtTokenProvider.createToken(loginForm.getEmail());
-        String refreshToken = jwtTokenProvider.createRefreshToken(loginForm.getEmail());*/
+        String token = jwtTokenProvider.createToken(user);
 
-        LoginResponse loginResponse = new LoginResponse();
-
-        return loginResponse;
+        return token;
     }
 }

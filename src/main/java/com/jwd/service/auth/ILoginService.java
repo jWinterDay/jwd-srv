@@ -4,6 +4,9 @@ import com.jwd.model.auth.Login;
 import com.jwd.model.auth.LoginResponse;
 import com.jwd.model.auth.User;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 public interface ILoginService {
     User findByEmail(String email);
 
@@ -11,5 +14,6 @@ public interface ILoginService {
 
     LoginResponse login(Login loginForm);
 
-    LoginResponse refreshToken();
+    String refreshToken(HttpServletRequest request,
+                               HttpServletResponse response);
 }

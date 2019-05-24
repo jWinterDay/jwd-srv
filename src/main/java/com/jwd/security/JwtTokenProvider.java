@@ -31,8 +31,6 @@ public class JwtTokenProvider {
     @Value("${security.token.expiration-time-ms}")
     private long tokenValidityInMilliseconds = 2800000;
 
-    @Value("${security.refresh-token.signing-key}")
-    private String refreshTokenSecretKey;
     @Value("${security.refresh-token.expiration-time-ms}")
     private long refreshTokenValidityInMilliseconds = 432000000;
 
@@ -45,7 +43,8 @@ public class JwtTokenProvider {
         Date now = new Date();
         Date validity = new Date(now.getTime() + tokenValidityInMilliseconds);
 
-        Claims claims = Jwts.claims();//.setSubject(user.getEmail());
+        Claims claims = Jwts.claims();
+        claims.setSubject(user.getEmail());
         claims.put("email", user.getEmail());
         claims.put("first_name", user.getFirstName());
         claims.put("last_name", user.getLastName());
@@ -61,7 +60,8 @@ public class JwtTokenProvider {
     }
 
     public String createRefreshToken(User user) {
-        Claims claims = Jwts.claims().setSubject(user.getEmail());
+        Claims claims = Jwts.claims();
+        claims.setSubject(user.getEmail());
 
         Date now = new Date();
         Date validity = new Date(now.getTime() + refreshTokenValidityInMilliseconds);
@@ -70,8 +70,12 @@ public class JwtTokenProvider {
                 .setClaims(claims)
                 .setIssuedAt(now)
                 .setExpiration(validity)
-                .signWith(SignatureAlgorithm.HS256, refreshTokenSecretKey)
+                .signWith(SignatureAlgorithm.HS256, tokenSecretKey)
                 .compact();
+    }
+
+    public String getSubject(String token) {
+        return Jwts.parser().setSigningKey(tokenSecretKey).parseClaimsJws(token).getBody().getSubject();
     }
 
     public User parse(String token) {

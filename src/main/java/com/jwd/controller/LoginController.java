@@ -12,6 +12,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 @RestController
 @Api(tags = "login")
 public class LoginController {
@@ -33,12 +36,12 @@ public class LoginController {
     @ApiOperation(value = "Get token and refresh token when token has expired")
     @ApiResponses(value = {
             @ApiResponse(code = 400, message = "Something went wrong"),
-            //@ApiResponse(code = 403, message = "Access denied"),
-            //@ApiResponse(code = 404, message = "The user doesn't exist"),
+            @ApiResponse(code=401, message = "Expired or invalid JWT token"),
             @ApiResponse(code = 500, message = "Expired or invalid JWT token")})
-    public ResponseEntity<?> refreshToken() {
-        LoginResponse loginResponse = loginService.refreshToken();
+    public ResponseEntity<String> refreshToken(HttpServletRequest request,
+                                          HttpServletResponse response) {
+        String nextToken = loginService.refreshToken(request, response);
 
-        return new ResponseEntity<>(loginResponse, HttpStatus.OK);
+        return new ResponseEntity<String>(nextToken, HttpStatus.OK);
     }
 }

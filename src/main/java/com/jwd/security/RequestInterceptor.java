@@ -15,6 +15,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class RequestInterceptor implements HandlerInterceptor {
     private JwtTokenProvider jwtTokenProvider;
@@ -39,7 +40,10 @@ public class RequestInterceptor implements HandlerInterceptor {
             User user = jwtTokenProvider.parse(token);
 
             long expectedId = requestAccessGroup.accessGroupId();
-            List<AccessGroup> userGroups = user.getAccessGroups();
+            List<Long> userGroups = user.getAccessGroups()
+                    .stream()
+                    .map(p -> p.getAccessGroupId())
+                    .collect(Collectors.toList());
 
             if (!userGroups.contains(expectedId)) {
                 throw new CustomException("You don't have permission", HttpStatus.FORBIDDEN);
