@@ -12,6 +12,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.Pbkdf2PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -79,5 +81,15 @@ public class LoginServiceImpl implements ILoginService {
         String token = jwtTokenProvider.createToken(user);
 
         return token;
+    }
+
+    @PostConstruct
+    public void postInit() {
+        System.out.println("postInit");
+    }
+
+    @PreDestroy
+    public void preDestroy() {
+        System.out.println("preDestroy");
     }
 }

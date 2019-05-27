@@ -36,7 +36,7 @@ public class ProjectController {
     }
 
     @GetMapping(value = "/project_list")
-    @RequestAccess(accessGroupId = AccessGroupId.PROJECT_VIEW)
+    //@RequestAccess(accessGroupId = AccessGroupId.PROJECT_VIEW)
     public String getProjectListView1(@RequestParam(value = "page", defaultValue = "0") int page,
                                       @RequestParam(value = "size", defaultValue = "10") int size,
                                       Model model) {
